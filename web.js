@@ -18,28 +18,28 @@ var countNeighbours = function(x,y) {
 
     if (x-1 > 0) {
         if(y-1>0) {
-            if (stateGol[x-1][y-1] == true) count = count + 1;
+            if (stateGol[x-1][y-1] != null) count = count + 1;
         }
-        if (stateGol[x-1][y] == true) count = count + 1;
+        if (stateGol[x-1][y] != null) count = count + 1;
         if(y+1<20) {
-            if (stateGol[x-1][y+1] == true) count = count + 1;
+            if (stateGol[x-1][y+1] != null) count = count + 1;
         }
     }
 
     if(y-1>0) {
-        if (stateGol[x][y-1] == true ) count = count + 1;
+        if (stateGol[x][y-1] != null ) count = count + 1;
     }
     if(y+1<20) {
-        if (stateGol[x][y+1] == true ) count = count + 1;
+        if (stateGol[x][y+1] != null ) count = count + 1;
     }
 
     if (x+1 < 40) {
         if(y-1>0) {
-            if (stateGol[x+1][y-1] == true ) count = count + 1;
+            if (stateGol[x+1][y-1] != null ) count = count + 1;
         }
-        if (stateGol[x+1][y] == true ) count = count + 1;
+        if (stateGol[x+1][y] != null ) count = count + 1;
         if(y+1<20) {
-            if (stateGol[x+1][y+1] == true) count = count + 1;
+            if (stateGol[x+1][y+1] != null ) count = count + 1;
         }
     }
 
@@ -48,13 +48,13 @@ var countNeighbours = function(x,y) {
 
 var stateGol = emptyState();
 
-stateGol[1][2] = true;
-stateGol[1][1] = true;
-stateGol[2][2] = true;
+stateGol[1][2] = "#000";
+stateGol[1][1] = "#000";
+stateGol[2][2] = "#000";
 
-stateGol[6][7] = true;
-stateGol[7][7] = true;
-stateGol[8][7] = true;
+stateGol[6][7] = "#000";
+stateGol[7][7] = "#000";
+stateGol[8][7] = "#000";
 
 
 port = process.env.PORT || 8080;
@@ -83,7 +83,11 @@ new cronJob('*/5 * * * * *', function(){
             count = countNeighbours(x,y);
             element =  stateGol[x][y];
             if (count == 3 || count == 2 && element) {
-                newstate[x][y] = true;
+                if (element) {
+                  newstate[x][y] = element;
+                } else {
+                  newstate[x][y] = "#000";
+                }
             }
         }
     }
@@ -97,7 +101,7 @@ new cronJob('*/5 * * * * *', function(){
 io.sockets.on('connection', function (socket) {
     socket.emit('news', { location: stateGol });
     socket.on('locationUpdate', function (data) {
-        stateGol[data.location.column][data.location.row] = true;
+        stateGol[data.location.column][data.location.row] = data.color;
         io.sockets.emit('news', { location: stateGol });
     });
 

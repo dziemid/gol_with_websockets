@@ -1,5 +1,7 @@
 var socket = io.connect('/');
 
+var mycolor = '#'+Math.floor(Math.random()*16777215).toString(16);
+
 var golState = new Array(1);
 golState[0] = new Array(1);
 
@@ -57,7 +59,7 @@ function getCursorPosition(e) {
 
 function halmaOnClick(e) {
     var cell = getCursorPosition(e);
-    socket.emit('locationUpdate', { location: cell });
+    socket.emit('locationUpdate', { location: cell, color: mycolor });
 }
 
 function drawBoard() {
@@ -88,15 +90,15 @@ function drawBoard() {
     for (var x = 0; x < length; x++) {
         width = golState[x].length
         for (var y = 0; y < width; y++) {
-            element =  golState[x][y];
-            if (element) {
-                drawPiece(x,y);
+            color =  golState[x][y];
+            if (color) {
+                drawPiece(x,y, color);
             }
         }
    }
 }
 
-function drawPiece(column, row) {
+function drawPiece(column, row, color) {
     var x = (column * kPieceWidth) + (kPieceWidth/2);
     var y = (row * kPieceHeight) + (kPieceHeight/2);
     var radius = (kPieceWidth/2) - (kPieceWidth/10);
@@ -106,7 +108,7 @@ function drawPiece(column, row) {
     gDrawingContext.strokeStyle = "#000";
     gDrawingContext.stroke();
 
-    gDrawingContext.fillStyle = "#000";
+    gDrawingContext.fillStyle = color;
     gDrawingContext.fill();
 }
 
