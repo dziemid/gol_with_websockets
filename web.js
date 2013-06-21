@@ -1,3 +1,21 @@
+function componentToHex(c) {
+    var hex = Math.floor(c).toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+}
+
+function rgbToHex(r, g, b) {
+    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+
+function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex.substring(0,7));
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
+}
+
 var cronJob = require('cron').CronJob;
 
 var app = require('express')()
@@ -5,7 +23,7 @@ var app = require('express')()
     , io = require('socket.io').listen(server)
     , express = require("express");
 
-var emptyState = function() {
+var emptyState = function () {
     var state = new Array(40);
     for (var i = 0; i < 40; i++) {
         state[i] = new Array(20);
@@ -13,48 +31,101 @@ var emptyState = function() {
     return state;
 }
 
-var countNeighbours = function(x,y) {
+var countNeighbours = function (x, y) {
     var count = 0;
+    var color = {};
 
-    if (x-1 > 0) {
-        if(y-1>0) {
-            if (stateGol[x-1][y-1] != null) count = count + 1;
+    var r = 0;
+    var g = 250;
+    var b = 0;
+
+    if (x - 1 > 0) {
+        if (y - 1 > 0) {
+            if (stateGol[x - 1][y - 1] != null) {
+                color = hexToRgb(stateGol[x - 1][y - 1]);
+                r = r + color.r;
+                g = g + color.g;
+                b = b + color.b;
+                count = count + 1;
+            }
         }
-        if (stateGol[x-1][y] != null) count = count + 1;
-        if(y+1<20) {
-            if (stateGol[x-1][y+1] != null) count = count + 1;
+        if (stateGol[x - 1][y] != null) {
+            color = hexToRgb(stateGol[x - 1][y]);
+            r = r + color.r;
+            g = g + color.g;
+            b = b + color.b;
+            count = count + 1;
+        }
+        if (y + 1 < 20) {
+            if (stateGol[x - 1][y + 1] != null) {
+                color = hexToRgb(stateGol[x - 1][y + 1]);
+                r = r + color.r;
+                g = g + color.g;
+                b = b + color.b;
+                count = count + 1;
+            }
         }
     }
 
-    if(y-1>0) {
-        if (stateGol[x][y-1] != null ) count = count + 1;
-    }
-    if(y+1<20) {
-        if (stateGol[x][y+1] != null ) count = count + 1;
-    }
-
-    if (x+1 < 40) {
-        if(y-1>0) {
-            if (stateGol[x+1][y-1] != null ) count = count + 1;
-        }
-        if (stateGol[x+1][y] != null ) count = count + 1;
-        if(y+1<20) {
-            if (stateGol[x+1][y+1] != null ) count = count + 1;
+    if (y - 1 > 0) {
+        if (stateGol[x][y - 1] != null) {
+            color = hexToRgb(stateGol[x][y - 1]);
+            r = r + color.r;
+            g = g + color.g;
+            b = b + color.b;
+            count = count + 1;
         }
     }
+    if (y + 1 < 20) {
+        if (stateGol[x][y + 1] != null) {
+            color = hexToRgb(stateGol[x][y + 1]);
+            r = r + color.r;
+            g = g + color.g;
+            b = b + color.b;
+            count = count + 1;
+        }
+    }
 
-    return count;
+    if (x + 1 < 40) {
+        if (y - 1 > 0) {
+            if (stateGol[x + 1][y - 1] != null) {
+                color = hexToRgb(stateGol[x + 1][y - 1]);
+                r = r + color.r;
+                g = g + color.g;
+                b = b + color.b;
+                count = count + 1;
+            }
+        }
+        if (stateGol[x + 1][y] != null) {
+            color = hexToRgb(stateGol[x + 1][y]);
+            r = r + color.r;
+            g = g + color.g;
+            b = b + color.b;
+            count = count + 1;
+        }
+        if (y + 1 < 20) {
+            if (stateGol[x + 1][y + 1] != null) {
+                color = hexToRgb(stateGol[x + 1][y + 1]);
+                r = r + color.r;
+                g = g + color.g;
+                b = b + color.b;
+                count = count + 1;
+            }
+        }
+    }
+
+    return {count: count, color: rgbToHex(r/3, g/3, b/3)};
 }
 
 var stateGol = emptyState();
 
-stateGol[1][2] = "#000";
-stateGol[1][1] = "#000";
-stateGol[2][2] = "#000";
+stateGol[1][2] = "#000000";
+stateGol[1][1] = "#000000";
+stateGol[2][2] = "#000000";
 
-stateGol[6][7] = "#000";
-stateGol[7][7] = "#000";
-stateGol[8][7] = "#000";
+stateGol[6][7] = "#000000";
+stateGol[7][7] = "#000000";
+stateGol[8][7] = "#000000";
 
 
 port = process.env.PORT || 8080;
@@ -73,20 +144,20 @@ io.configure(function () {
     io.set("polling duration", 10);
 });
 
-new cronJob('*/5 * * * * *', function(){
+new cronJob('*/5 * * * * *', function () {
 
     var element = null;
     var newstate = emptyState();
-    var count = 0;
+    var result = {};
     for (var x = 0; x < 40; x++) {
         for (var y = 0; y < 20; y++) {
-            count = countNeighbours(x,y);
-            element =  stateGol[x][y];
-            if (count == 3 || count == 2 && element) {
+            result = countNeighbours(x, y);
+            element = stateGol[x][y];
+            if (result.count == 3 || result.count == 2 && element) {
                 if (element) {
-                  newstate[x][y] = element;
+                    newstate[x][y] = element;
                 } else {
-                  newstate[x][y] = "#000";
+                    newstate[x][y] = result.color;
                 }
             }
         }
