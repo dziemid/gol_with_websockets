@@ -52,6 +52,10 @@ stateGol[1][2] = true;
 stateGol[1][1] = true;
 stateGol[2][2] = true;
 
+stateGol[6][7] = true;
+stateGol[7][7] = true;
+stateGol[8][7] = true;
+
 
 port = process.env.PORT || 8080;
 

@@ -14,12 +14,23 @@
 
 <div>
     <div id="peekaboo" ng-controller="PeekabooCtrl">
-        <h1>Hello {{yourName}}!</h1>
+        <h1>Hello to multiplayer game of life!</h1>
 
 
+        Share link to this page with someone and you can play together.
+
+        <ul>
+        <li>Any live cell with fewer than two live neighbours dies, as if caused by under-population.</li>
+        <li>Any live cell with two or three live neighbours lives on to the next generation.</li>
+        <li>Any live cell with more than three live neighbours dies, as if by overcrowding.</li>
+        <li>Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.</li>
+        </ul>
     </div>
 
 </div>
+
+<a href="http://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">http://en.wikipedia.org/wiki/Conway%27s_Game_of_Life</a>
+<br/></br>
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/angular/angular.min.js"></script>
