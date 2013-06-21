@@ -12,10 +12,10 @@ function PeekabooCtrl($scope) {
     $scope.yourName = "Greg";
 }
 
-var kBoardWidth = 20;
-var kBoardHeight= 10;
-var kPieceWidth = 50;
-var kPieceHeight= 50;
+var kBoardWidth = 40;
+var kBoardHeight= 20;
+var kPieceWidth = 30;
+var kPieceHeight= 30;
 var kPixelWidth = 1 + (kBoardWidth * kPieceWidth);
 var kPixelHeight= 1 + (kBoardHeight * kPieceHeight);
 

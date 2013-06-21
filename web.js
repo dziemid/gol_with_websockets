@@ -6,9 +6,9 @@ var app = require('express')()
     , express = require("express");
 
 var emptyState = function() {
-    var state = new Array(20);
-    for (var i = 0; i < 20; i++) {
-        state[i] = new Array(10);
+    var state = new Array(40);
+    for (var i = 0; i < 40; i++) {
+        state[i] = new Array(20);
     }
     return state;
 }
@@ -21,7 +21,7 @@ var countNeighbours = function(x,y) {
             if (stateGol[x-1][y-1] == true) count = count + 1;
         }
         if (stateGol[x-1][y] == true) count = count + 1;
-        if(y+1<10) {
+        if(y+1<20) {
             if (stateGol[x-1][y+1] == true) count = count + 1;
         }
     }
@@ -29,16 +29,16 @@ var countNeighbours = function(x,y) {
     if(y-1>0) {
         if (stateGol[x][y-1] == true ) count = count + 1;
     }
-    if(y+1<10) {
+    if(y+1<20) {
         if (stateGol[x][y+1] == true ) count = count + 1;
     }
 
-    if (x+1 < 20) {
+    if (x+1 < 40) {
         if(y-1>0) {
             if (stateGol[x+1][y-1] == true ) count = count + 1;
         }
         if (stateGol[x+1][y] == true ) count = count + 1;
-        if(y+1<10) {
+        if(y+1<20) {
             if (stateGol[x+1][y+1] == true) count = count + 1;
         }
     }
@@ -73,13 +73,13 @@ io.configure(function () {
     io.set("polling duration", 10);
 });
 
-new cronJob('*/3 * * * * *', function(){
+new cronJob('*/5 * * * * *', function(){
 
     var element = null;
     var newstate = emptyState();
     var count = 0;
-    for (var x = 0; x < 20; x++) {
-        for (var y = 0; y < 10; y++) {
+    for (var x = 0; x < 40; x++) {
+        for (var y = 0; y < 20; y++) {
             count = countNeighbours(x,y);
             element =  stateGol[x][y];
             if (count == 3 || count == 2 && element) {
