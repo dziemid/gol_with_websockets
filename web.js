@@ -228,7 +228,7 @@ var randomLocation = function () {
     return {x: x, y: y};
 }
 
-new cronJob('43 */6 * * * *', function () {
+new cronJob('43 */15 * * * *', function () {
     var loc = randomLocation();
     stateGol[loc.x - 1][loc.y - 1] = "#000000";
     stateGol[loc.x][loc.y] = "#000000";
@@ -241,13 +241,13 @@ new cronJob('43 */6 * * * *', function () {
 }, null, true, "America/Los_Angeles");
 
 
-new cronJob('13 */2 * * * *', function () {
+new cronJob('13 */5 * * * *', function () {
     var loc = randomLocation();
     blinker(loc.x, loc.y);
     notifyClientsAboutState();
 }, null, true, "America/Los_Angeles");
 
-new cronJob('30 * * * * *', function () {
+new cronJob('30 */3 * * * *', function () {
     var loc = randomLocation();
     stateGol[loc.x][loc.y] = "#000000";
     notifyClientsAboutState();
