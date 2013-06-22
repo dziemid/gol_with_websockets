@@ -75,6 +75,7 @@ function getCursorPosition(e) {
 
 function halmaOnClick(e) {
     var cell = getCursorPosition(e);
+    drawPiece(cell.column,cell.row, mycolor);
     socket.emit('locationUpdate', { location: cell, color: mycolor });
 }
 
