@@ -149,21 +149,42 @@ io.configure(function () {
     io.set("polling duration", 10);
 });
 
-new cronJob('13 * * * * *', function () {
+var randomLocation = function() {
     var x = Math.floor(5 + Math.random() * 30);
     var y = Math.floor(5 + Math.random() * 30);
+    return {x: x, y: y};
+}
 
-    stateGol[x-1][y] = "#000000";
-    stateGol[x][y] = "#000000";
-    stateGol[x+1][y] = "#000000";
+new cronJob('43 */6 * * * *', function () {
+    var loc = randomLocation();
+    stateGol[loc.x-1][loc.y-1] = "#000000";
+    stateGol[loc.x][loc.y] = "#000000";
+    stateGol[loc.x+1][loc.y] = "#000000";
+    stateGol[loc.x+1][loc.y-1] = "#000000";
+    stateGol[loc.x][loc.y+1] = "#000000";
 
     io.sockets.emit('news', { location: stateGol });
 
 }, null, true, "America/Los_Angeles");
 
 
-new cronJob('*/5 * * * * *', function () {
+new cronJob('13 */2 * * * *', function () {
+    var loc = randomLocation();
+    stateGol[loc.x-1][loc.y] = "#000000";
+    stateGol[loc.x][loc.y] = "#000000";
+    stateGol[loc.x+1][loc.y] = "#000000";
 
+    io.sockets.emit('news', { location: stateGol });
+}, null, true, "America/Los_Angeles");
+
+new cronJob('30 * * * * *', function () {
+    var loc = randomLocation();
+    stateGol[loc.x][loc.y] = "#000000";
+    io.sockets.emit('news', { location: stateGol });
+}, null, true, "America/Los_Angeles");
+
+
+var goToNextGeneration = function () {
     var element = null;
     var newstate = emptyState();
     var result = {};
@@ -182,9 +203,11 @@ new cronJob('*/5 * * * * *', function () {
     }
 
     stateGol = newstate;
+}
 
+new cronJob('*/5 * * * * *', function () {
+    goToNextGeneration();
     io.sockets.emit('news', { location: stateGol });
-
 }, null, true, "America/Los_Angeles");
 
 io.sockets.on('connection', function (socket) {
