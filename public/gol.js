@@ -15,7 +15,7 @@ function PeekabooCtrl($scope) {
 }
 
 var kBoardWidth = 40;
-var kBoardHeight= 20;
+var kBoardHeight= 40;
 var kPieceWidth = 30;
 var kPieceHeight= 30;
 var kPixelWidth = 1 + (kBoardWidth * kPieceWidth);

@@ -1,3 +1,8 @@
+var kBoardHeight= 40;
+var kBoardWidth = 40;
+
+
+
 function componentToHex(c) {
     var hex = Math.floor(c).toString(16);
     return hex.length == 1 ? "0" + hex : hex;
@@ -24,9 +29,9 @@ var app = require('express')()
     , express = require("express");
 
 var emptyState = function () {
-    var state = new Array(40);
-    for (var i = 0; i < 40; i++) {
-        state[i] = new Array(20);
+    var state = new Array(kBoardWidth);
+    for (var i = 0; i < kBoardWidth; i++) {
+        state[i] = new Array(kBoardHeight);
     }
     return state;
 }
@@ -56,7 +61,7 @@ var countNeighbours = function (x, y) {
             b = b + color.b;
             count = count + 1;
         }
-        if (y + 1 < 20) {
+        if (y + 1 < kBoardHeight) {
             if (stateGol[x - 1][y + 1] != null) {
                 color = hexToRgb(stateGol[x - 1][y + 1]);
                 r = r + color.r;
@@ -76,7 +81,7 @@ var countNeighbours = function (x, y) {
             count = count + 1;
         }
     }
-    if (y + 1 < 20) {
+    if (y + 1 < kBoardHeight) {
         if (stateGol[x][y + 1] != null) {
             color = hexToRgb(stateGol[x][y + 1]);
             r = r + color.r;
@@ -86,7 +91,7 @@ var countNeighbours = function (x, y) {
         }
     }
 
-    if (x + 1 < 40) {
+    if (x + 1 < kBoardWidth) {
         if (y - 1 > 0) {
             if (stateGol[x + 1][y - 1] != null) {
                 color = hexToRgb(stateGol[x + 1][y - 1]);
@@ -103,7 +108,7 @@ var countNeighbours = function (x, y) {
             b = b + color.b;
             count = count + 1;
         }
-        if (y + 1 < 20) {
+        if (y + 1 < kBoardHeight) {
             if (stateGol[x + 1][y + 1] != null) {
                 color = hexToRgb(stateGol[x + 1][y + 1]);
                 r = r + color.r;
@@ -144,13 +149,26 @@ io.configure(function () {
     io.set("polling duration", 10);
 });
 
+new cronJob('13 * * * * *', function () {
+    var x = Math.floor(5 + Math.random() * 30);
+    var y = Math.floor(5 + Math.random() * 30);
+
+    stateGol[x-1][y] = "#000000";
+    stateGol[x][y] = "#000000";
+    stateGol[x+1][y] = "#000000";
+
+    io.sockets.emit('news', { location: stateGol });
+
+}, null, true, "America/Los_Angeles");
+
+
 new cronJob('*/5 * * * * *', function () {
 
     var element = null;
     var newstate = emptyState();
     var result = {};
-    for (var x = 0; x < 40; x++) {
-        for (var y = 0; y < 20; y++) {
+    for (var x = 0; x < kBoardWidth; x++) {
+        for (var y = 0; y < kBoardHeight; y++) {
             result = countNeighbours(x, y);
             element = stateGol[x][y];
             if (result.count == 3 || result.count == 2 && element) {
