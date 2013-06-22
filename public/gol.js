@@ -38,7 +38,7 @@ function PeekabooCtrl($scope) {
     $scope.generationNumber = "Loading... (please wait)";
 }
 
-var kBoardWidth = 40;
+var kBoardWidth = 50;
 var kBoardHeight= 40;
 var kPieceWidth = 25;
 var kPieceHeight= 25;

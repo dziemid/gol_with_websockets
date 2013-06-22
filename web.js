@@ -1,5 +1,5 @@
 var kBoardHeight = 40;
-var kBoardWidth = 40;
+var kBoardWidth = 50;
 
 var color_pattern = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i;
 var generation = 0;
@@ -125,13 +125,85 @@ var countNeighbours = function (x, y) {
 
 var stateGol = emptyState();
 
-stateGol[1][2] = "#000000";
-stateGol[1][1] = "#000000";
-stateGol[2][2] = "#000000";
+var gosperGliderGun = function () {
 
-stateGol[6][7] = "#000000";
-stateGol[7][7] = "#000000";
-stateGol[8][7] = "#000000";
+    stateGol[26][1] = "#000000";
+    stateGol[24][2] = "#000000";
+    stateGol[26][2] = "#000000";
+
+    stateGol[23][3] = "#000000";
+    stateGol[22][3] = "#000000";
+    stateGol[23][4] = "#000000";
+    stateGol[22][4] = "#000000";
+    stateGol[23][5] = "#000000";
+    stateGol[22][5] = "#000000";
+    stateGol[24][6] = "#000000";
+    stateGol[26][6] = "#000000";
+    stateGol[26][7] = "#000000";
+
+
+    stateGol[36][3] = "#000000";
+    stateGol[37][3] = "#000000";
+    stateGol[36][4] = "#000000";
+    stateGol[37][4] = "#000000";
+
+    stateGol[2][5] = "#000000";
+    stateGol[3][5] = "#000000";
+    stateGol[2][6] = "#000000";
+    stateGol[3][6] = "#000000";
+
+
+    stateGol[14][3] = "#000000";
+    stateGol[15][3] = "#000000";
+    stateGol[13][4] = "#000000";
+    stateGol[12][5] = "#000000";
+    stateGol[12][6] = "#000000";
+    stateGol[12][7] = "#000000";
+    stateGol[13][8] = "#000000";
+    stateGol[14][9] = "#000000";
+    stateGol[15][9] = "#000000";
+
+    stateGol[16][6] = "#000000";
+
+    stateGol[17][8] = "#000000";
+    stateGol[17][4] = "#000000";
+
+    stateGol[18][5] = "#000000";
+    stateGol[18][6] = "#000000";
+    stateGol[18][7] = "#000000";
+    stateGol[19][6] = "#000000";
+}
+
+gosperGliderGun();
+
+var toad = function(x,y) {
+    blinker(x,y);
+    blinker(x+1,y+1);
+}
+
+var blinker = function(x,y) {
+    stateGol[x-1][y] = "#000000";
+    stateGol[x][y] = "#000000";
+    stateGol[x+1][y] = "#000000";
+}
+
+var block = function(x,y) {
+    stateGol[x][y] = "#000000";
+    stateGol[x][y-1] = "#000000";
+    stateGol[x+1][y] = "#000000";
+
+}
+
+var beacon = function(x,y) {
+    block(x,y);
+    block(x+2,y+2);
+}
+
+block(31,21);
+
+blinker(37,27);
+toad(10,20);
+beacon(30,30);
 
 
 port = process.env.PORT || 8080;
@@ -198,7 +270,7 @@ var shouldGoToNextGeneration = function () {
 
 var goToNextGeneration = function () {
     if (shouldGoToNextGeneration) {
-        generation = generation +1;
+        generation = generation + 1;
         var element = null;
         var newstate = emptyState();
         var result = {};
@@ -220,11 +292,11 @@ var goToNextGeneration = function () {
     }
 }
 
-var notifyClientsAboutState = function() {
+var notifyClientsAboutState = function () {
     notifyAboutState(io.sockets);
 }
 
-var notifyAboutState = function(target) {
+var notifyAboutState = function (target) {
     target.emit('news', { location: stateGol, generation: generation });
 }
 
@@ -232,7 +304,7 @@ new cronJob('*/10 * * * * *', function () {
     goToNextGeneration();
 }, null, true, "America/Los_Angeles");
 
-new cronJob('* */3 * * * *', function () {
+new cronJob('* */1 * * * *', function () {
     goToNextGeneration();
 }, null, true, "America/Los_Angeles");
 
