@@ -10,11 +10,17 @@ golState[0] = new Array(1);
 
 function PeekabooCtrl($scope) {
 
+    socket.on('miniNews', function (message) {
+        var data = message.data;
+        golState[data.column][data.row] = data.color;
+        drawPiece(data.column,data.row, data.color);
+    });
+
     socket.on('news', function (data) {
         golState = data.location;
         $scope.generationNumber = data.generation;
         $scope.$apply();
-        
+
         drawBoard();
         if (showingFacebook == false) {
             showingFacebook = true;

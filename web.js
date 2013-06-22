@@ -164,7 +164,7 @@ new cronJob('43 */6 * * * *', function () {
     stateGol[loc.x + 1][loc.y - 1] = "#000000";
     stateGol[loc.x][loc.y + 1] = "#000000";
 
-    io.sockets.emit('news', { location: stateGol });
+    notifyClientsAboutState();
 
 }, null, true, "America/Los_Angeles");
 
@@ -175,13 +175,13 @@ new cronJob('13 */2 * * * *', function () {
     stateGol[loc.x][loc.y] = "#000000";
     stateGol[loc.x + 1][loc.y] = "#000000";
 
-    io.sockets.emit('news', { location: stateGol });
+    notifyClientsAboutState();
 }, null, true, "America/Los_Angeles");
 
 new cronJob('30 * * * * *', function () {
     var loc = randomLocation();
     stateGol[loc.x][loc.y] = "#000000";
-    io.sockets.emit('news', { location: stateGol });
+    notifyClientsAboutState();
 }, null, true, "America/Los_Angeles");
 
 var lastRun = new Date();
@@ -215,10 +215,17 @@ var goToNextGeneration = function () {
                 }
             }
         }
-
         stateGol = newstate;
-        io.sockets.emit('news', { location: stateGol, generation: generation });
+        notifyClientsAboutState();
     }
+}
+
+var notifyClientsAboutState = function() {
+    notifyAboutState(io.sockets);
+}
+
+var notifyAboutState = function(target) {
+    target.emit('news', { location: stateGol, generation: generation });
 }
 
 new cronJob('*/10 * * * * *', function () {
@@ -231,13 +238,12 @@ new cronJob('* */3 * * * *', function () {
 
 
 io.sockets.on('connection', function (socket) {
-    socket.emit('news', { location: stateGol });
+    notifyAboutState(socket);
     socket.on('locationUpdate', function (data) {
         if (hexToRgb(data.color)) {
             stateGol[data.location.column][data.location.row] = data.color;
+            io.sockets.emit('miniNews', { data: { color: data.color, column: data.location.column, row: data.location.row } });
         }
-        ;
-        io.sockets.emit('news', { location: stateGol });
     });
 
 });
