@@ -223,8 +223,8 @@ io.configure(function () {
 });
 
 var randomLocation = function () {
-    var x = Math.floor(5 + Math.random() * 30);
-    var y = Math.floor(5 + Math.random() * 30);
+    var x = Math.floor(14 + Math.random() * kBoardWidth-15);
+    var y = Math.floor(14 + Math.random() * kBoardHeight-15);
     return {x: x, y: y};
 }
 
