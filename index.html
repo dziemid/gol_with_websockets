@@ -21,8 +21,9 @@
     <div id="peekaboo" ng-controller="PeekabooCtrl">
         <h1>Hello to <b>multiplayer game of life!</b>
         <br/>
-        <div class="fb-like" data-href="http://damp-refuge-4230.herokuapp.com/" data-send="true" data-width="450" data-show-faces="true"></div>
         </h1>
+        <div class="fb-like" data-href="http://damp-refuge-4230.herokuapp.com/" data-send="true" data-width="450" data-show-faces="true"></div>
+        <br/>
 
         Share link to this page with someone <b>and you can play together.</b>
         <a href="https://twitter.com/share" class="twitter-share-button" data-text="Multiplayer game of life!" data-via="dziemid">Tweet</a>
@@ -35,7 +36,8 @@
             <li>Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.</li>
             <li><a href="http://en.wikipedia.org/wiki/Conway%27s_Game_of_Life" target="_blank">Read more on wikipedia</a></li>
         </ul>
-        <b>Click</b> to add new cell.
+        <b>Click</b> to add new cell. Wait for evolution to take place.. Every 3 minutes games speeds up for a minute (enjoy the show!).
+        <p><b>Current generation:</b> {{generationNumber}}</p>
     </div>
 
     <canvas id="myCanvas"></canvas>

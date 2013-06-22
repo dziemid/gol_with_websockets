@@ -1,7 +1,8 @@
-var kBoardHeight= 40;
+var kBoardHeight = 40;
 var kBoardWidth = 40;
 
 var color_pattern = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i;
+var generation = 0;
 
 function componentToHex(c) {
     var hex = Math.floor(c).toString(16);
@@ -13,7 +14,7 @@ function rgbToHex(r, g, b) {
 }
 
 function hexToRgb(hex) {
-    var result = color_pattern.exec(hex.substring(0,7));
+    var result = color_pattern.exec(hex.substring(0, 7));
     return result ? {
         r: parseInt(result[1], 16),
         g: parseInt(result[2], 16),
@@ -119,7 +120,7 @@ var countNeighbours = function (x, y) {
         }
     }
 
-    return {count: count, color: rgbToHex(r/3, g/3, b/3)};
+    return {count: count, color: rgbToHex(r / 3, g / 3, b / 3)};
 }
 
 var stateGol = emptyState();
@@ -149,7 +150,7 @@ io.configure(function () {
     io.set("polling duration", 10);
 });
 
-var randomLocation = function() {
+var randomLocation = function () {
     var x = Math.floor(5 + Math.random() * 30);
     var y = Math.floor(5 + Math.random() * 30);
     return {x: x, y: y};
@@ -157,11 +158,11 @@ var randomLocation = function() {
 
 new cronJob('43 */6 * * * *', function () {
     var loc = randomLocation();
-    stateGol[loc.x-1][loc.y-1] = "#000000";
+    stateGol[loc.x - 1][loc.y - 1] = "#000000";
     stateGol[loc.x][loc.y] = "#000000";
-    stateGol[loc.x+1][loc.y] = "#000000";
-    stateGol[loc.x+1][loc.y-1] = "#000000";
-    stateGol[loc.x][loc.y+1] = "#000000";
+    stateGol[loc.x + 1][loc.y] = "#000000";
+    stateGol[loc.x + 1][loc.y - 1] = "#000000";
+    stateGol[loc.x][loc.y + 1] = "#000000";
 
     io.sockets.emit('news', { location: stateGol });
 
@@ -170,9 +171,9 @@ new cronJob('43 */6 * * * *', function () {
 
 new cronJob('13 */2 * * * *', function () {
     var loc = randomLocation();
-    stateGol[loc.x-1][loc.y] = "#000000";
+    stateGol[loc.x - 1][loc.y] = "#000000";
     stateGol[loc.x][loc.y] = "#000000";
-    stateGol[loc.x+1][loc.y] = "#000000";
+    stateGol[loc.x + 1][loc.y] = "#000000";
 
     io.sockets.emit('news', { location: stateGol });
 }, null, true, "America/Los_Angeles");
@@ -183,39 +184,59 @@ new cronJob('30 * * * * *', function () {
     io.sockets.emit('news', { location: stateGol });
 }, null, true, "America/Los_Angeles");
 
+var lastRun = new Date();
+
+var shouldGoToNextGeneration = function () {
+    var now = new Date();
+    if (now - lastRun < 1000) {
+        return false;
+    } else {
+        lastRun = now;
+        return true;
+    }
+}
 
 var goToNextGeneration = function () {
-    var element = null;
-    var newstate = emptyState();
-    var result = {};
-    for (var x = 0; x < kBoardWidth; x++) {
-        for (var y = 0; y < kBoardHeight; y++) {
-            result = countNeighbours(x, y);
-            element = stateGol[x][y];
-            if (result.count == 3 || result.count == 2 && element) {
-                if (element) {
-                    newstate[x][y] = element;
-                } else {
-                    newstate[x][y] = result.color;
+    if (shouldGoToNextGeneration) {
+        generation = generation +1;
+        var element = null;
+        var newstate = emptyState();
+        var result = {};
+        for (var x = 0; x < kBoardWidth; x++) {
+            for (var y = 0; y < kBoardHeight; y++) {
+                result = countNeighbours(x, y);
+                element = stateGol[x][y];
+                if (result.count == 3 || result.count == 2 && element) {
+                    if (element) {
+                        newstate[x][y] = element;
+                    } else {
+                        newstate[x][y] = result.color;
+                    }
                 }
             }
         }
-    }
 
-    stateGol = newstate;
+        stateGol = newstate;
+        io.sockets.emit('news', { location: stateGol, generation: generation });
+    }
 }
 
-new cronJob('*/5 * * * * *', function () {
+new cronJob('*/10 * * * * *', function () {
     goToNextGeneration();
-    io.sockets.emit('news', { location: stateGol });
 }, null, true, "America/Los_Angeles");
+
+new cronJob('* */3 * * * *', function () {
+    goToNextGeneration();
+}, null, true, "America/Los_Angeles");
+
 
 io.sockets.on('connection', function (socket) {
     socket.emit('news', { location: stateGol });
     socket.on('locationUpdate', function (data) {
         if (hexToRgb(data.color)) {
             stateGol[data.location.column][data.location.row] = data.color;
-        };
+        }
+        ;
         io.sockets.emit('news', { location: stateGol });
     });
 

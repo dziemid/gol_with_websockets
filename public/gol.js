@@ -7,23 +7,29 @@ var mycolor = '#'+Math.floor(Math.random()*16777215).toString(16);
 var golState = new Array(1);
 golState[0] = new Array(1);
 
-socket.on('news', function (data) {
-    golState = data.location;
-    drawBoard();
-    if (showingFacebook == false) {
-        showingFacebook = true;
-        (function(d, s, id) {
-            var js, fjs = d.getElementsByTagName(s)[0];
-            if (d.getElementById(id)) return;
-            js = d.createElement(s); js.id = id;
-            js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=340577672736347";
-            fjs.parentNode.insertBefore(js, fjs);
-            }(document, 'script', 'facebook-jssdk'));
-    }
-});
 
 function PeekabooCtrl($scope) {
-    $scope.yourName = "Greg";
+
+    socket.on('news', function (data) {
+        golState = data.location;
+        $scope.generationNumber = data.generation;
+        $scope.$apply();
+        
+        drawBoard();
+        if (showingFacebook == false) {
+            showingFacebook = true;
+            (function(d, s, id) {
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) return;
+                js = d.createElement(s); js.id = id;
+                js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=340577672736347";
+                fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));
+        }
+    });
+
+
+    $scope.generationNumber = "Loading... (please wait)";
 }
 
 var kBoardWidth = 40;
@@ -35,14 +41,6 @@ var kPixelHeight= 1 + (kBoardHeight * kPieceHeight);
 
 var gCanvasElement;
 var gDrawingContext;
-var gPattern;
-
-var gPieces;
-var gNumPieces;
-var gSelectedPieceIndex;
-var gSelectedPieceHasMoved;
-var gMoveCount;
-var gGameInProgress;
 
 function Cell(row, column) {
     this.row = row;
