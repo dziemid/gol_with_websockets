@@ -301,7 +301,7 @@ new cronJob('*/10 * * * * *', function () {
     goToNextGeneration();
 }, null, true, "America/Los_Angeles");
 
-new cronJob('* */1 * * * *', function () {
+new cronJob('* */3 * * * *', function () {
     goToNextGeneration();
 }, null, true, "America/Los_Angeles");
 
