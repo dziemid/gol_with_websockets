@@ -2,7 +2,12 @@
 <html ng-app>
 <head>
     <style>
-
+        #page {
+            margin-left: 20px;
+        }
+        #myCanvas {
+            margin-left: 20px;
+        }
     </style>
 
 
@@ -12,26 +17,31 @@
 
 
 
-<div>
+<div id="page">
     <div id="peekaboo" ng-controller="PeekabooCtrl">
-        <h1>Hello to multiplayer game of life!
+        <h1>Hello to <b>multiplayer game of life!</b>
         <br/>
         <div class="fb-like" data-href="http://damp-refuge-4230.herokuapp.com/" data-send="true" data-width="450" data-show-faces="true"></div>
         </h1>
 
-        Share link to this page with someone and you can play together.
+        Share link to this page with someone <b>and you can play together.</b>
+        <a href="https://twitter.com/share" class="twitter-share-button" data-text="Multiplayer game of life!" data-via="dziemid">Tweet</a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 
         <ul>
             <li>Any live cell with fewer than two live neighbours dies, as if caused by under-population.</li>
             <li>Any live cell with two or three live neighbours lives on to the next generation.</li>
             <li>Any live cell with more than three live neighbours dies, as if by overcrowding.</li>
             <li>Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.</li>
+            <li><a href="http://en.wikipedia.org/wiki/Conway%27s_Game_of_Life" target="_blank">Read more on wikipedia</a></li>
         </ul>
+        <b>Click</b> to add new cell.
     </div>
+
+    <canvas id="myCanvas"></canvas>
 
 </div>
 
-<a href="http://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">http://en.wikipedia.org/wiki/Conway%27s_Game_of_Life</a>
 <br/></br>
 
 <script src="/socket.io/socket.io.js"></script>

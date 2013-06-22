@@ -1,7 +1,7 @@
 var kBoardHeight= 40;
 var kBoardWidth = 40;
 
-
+var color_pattern = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i;
 
 function componentToHex(c) {
     var hex = Math.floor(c).toString(16);
@@ -13,7 +13,7 @@ function rgbToHex(r, g, b) {
 }
 
 function hexToRgb(hex) {
-    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex.substring(0,7));
+    var result = color_pattern.exec(hex.substring(0,7));
     return result ? {
         r: parseInt(result[1], 16),
         g: parseInt(result[2], 16),
@@ -190,7 +190,9 @@ new cronJob('*/5 * * * * *', function () {
 io.sockets.on('connection', function (socket) {
     socket.emit('news', { location: stateGol });
     socket.on('locationUpdate', function (data) {
-        stateGol[data.location.column][data.location.row] = data.color;
+        if (hexToRgb(data.color)) {
+            stateGol[data.location.column][data.location.row] = data.color;
+        };
         io.sockets.emit('news', { location: stateGol });
     });
 

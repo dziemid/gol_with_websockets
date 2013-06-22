@@ -16,8 +16,8 @@ function PeekabooCtrl($scope) {
 
 var kBoardWidth = 40;
 var kBoardHeight= 40;
-var kPieceWidth = 30;
-var kPieceHeight= 30;
+var kPieceWidth = 25;
+var kPieceHeight= 25;
 var kPixelWidth = 1 + (kBoardWidth * kPieceWidth);
 var kPixelHeight= 1 + (kBoardHeight * kPieceHeight);
 
@@ -127,4 +127,4 @@ function initGame(canvasElement) {
     drawBoard();
 }
 
-initGame();
+initGame(document.getElementById("myCanvas"));
