@@ -243,10 +243,7 @@ new cronJob('43 */6 * * * *', function () {
 
 new cronJob('13 */2 * * * *', function () {
     var loc = randomLocation();
-    stateGol[loc.x - 1][loc.y] = "#000000";
-    stateGol[loc.x][loc.y] = "#000000";
-    stateGol[loc.x + 1][loc.y] = "#000000";
-
+    blinker(loc.x, loc.y);
     notifyClientsAboutState();
 }, null, true, "America/Los_Angeles");
 
