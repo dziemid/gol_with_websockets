@@ -1,5 +1,7 @@
 var socket = io.connect('/');
 
+var showingFacebook = false;
+
 var mycolor = '#'+Math.floor(Math.random()*16777215).toString(16);
 
 var golState = new Array(1);
@@ -8,6 +10,16 @@ golState[0] = new Array(1);
 socket.on('news', function (data) {
     golState = data.location;
     drawBoard();
+    if (showingFacebook == false) {
+        showingFacebook = true;
+        (function(d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=340577672736347";
+            fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));
+    }
 });
 
 function PeekabooCtrl($scope) {
